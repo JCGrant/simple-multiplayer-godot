@@ -19,3 +19,20 @@ func _on_peer_connected(player_id):
 
 func _on_peer_disconnected(player_id):
 	print("Player " + str(player_id) + " has disconnected")
+
+func send(id, type, payload={}):
+	rpc_unreliable_id(id, "_on_server_message", {
+		"type": type,
+		"payload": payload,
+	})
+
+func broadcast(type, payload={}):
+	rpc_unreliable_id(0, "_on_server_message", {
+		"type": type,
+		"payload": payload,
+	})
+
+remote func _on_client_message(message):
+	print(message)
+	if message.type == "CLICK_BUTTON":
+		send(message.sender_id, "BUTTON_CLICKED")

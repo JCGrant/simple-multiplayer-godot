@@ -16,7 +16,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Client="*res://autoload/Client.gd"
+Network="*res://autoload/Network.gd"
 
 [physics]
 

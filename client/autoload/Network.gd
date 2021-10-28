@@ -19,3 +19,13 @@ func _on_connection_succeeded():
 
 func _on_connection_failed():
 	print("Connecting to server failed")
+
+func send(type, payload={}):
+	rpc_unreliable_id(1, "_on_client_message", {
+		"type": type,
+		"sender_id": get_tree().get_network_unique_id(),
+		"payload": payload,
+	})
+
+remote func _on_server_message(message):
+	print(message)
