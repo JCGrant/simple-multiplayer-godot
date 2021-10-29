@@ -23,9 +23,23 @@ func _on_connection_failed():
 func send(type, payload={}):
 	rpc_unreliable_id(1, "_on_client_message", {
 		"type": type,
-		"sender_id": get_tree().get_network_unique_id(),
+		"player_id": get_tree().get_network_unique_id(),
 		"payload": payload,
 	})
 
 remote func _on_server_message(message):
-	print(message)
+	var type = message.type
+	var payload = message.payload
+	if type == "SET_STATE":
+		return get_node("../Level").setup_state(payload.state)
+	if type == "PLAYER_JOINED":
+		if is_local_player(payload.player_id):
+			return
+		return get_node("../Level").spawn_player(payload.player_id, payload.player)
+	if type == "PLAYER_LEFT":
+		return get_node("../Level").despawn_player(payload.player_id)
+	if type == "PLAYER_MOVED":
+		return get_node("../Level").move_player(payload.player_id, payload.position)
+
+func is_local_player(player_id):
+	return player_id == get_tree().get_network_unique_id()
