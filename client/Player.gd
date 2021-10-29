@@ -4,7 +4,7 @@ var id
 
 export (int) var speed = 10
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if not Network.is_local_player(id):
 		return
 	var velocity = Vector2()
