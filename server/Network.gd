@@ -30,14 +30,13 @@ func _on_peer_disconnected(player_id):
 	print("Player " + str(player_id) + " has disconnected")
 
 remote func _on_client_message(message):
+	var message_id = message.id
 	var type = message.type
 	var payload = message.payload
 	var player_id = message.player_id
 	if type == "MOVE_PLAYER":
-		var old_position = state.players[player_id].position
-		var new_position = old_position + payload.velocity
-		state.players[player_id].position = new_position
-		broadcast("PLAYER_MOVED", {"player_id": player_id, "position": new_position})
+		state.players[player_id].position = payload.position
+		broadcast("PLAYER_MOVED", {"message_id": message_id, "player_id": player_id, "position": payload.position})
 
 func send(id, type, payload={}):
 	rpc_unreliable_id(id, "_on_server_message", {

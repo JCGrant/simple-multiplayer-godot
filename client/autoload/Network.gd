@@ -4,6 +4,8 @@ var config = ConfigFile.new()
 var network = NetworkedMultiplayerENet.new()
 var ip
 var port
+var message_id = 1
+var unreconciled_messages = {}
 
 func _ready():
 	config.load("settings.cfg")
@@ -24,16 +26,13 @@ func _on_connection_succeeded():
 func _on_connection_failed():
 	print("Connecting to server failed")
 
-func send(type, payload={}):
-	rpc_unreliable_id(1, "_on_client_message", {
-		"type": type,
-		"player_id": get_tree().get_network_unique_id(),
-		"payload": payload,
-	})
-
 remote func _on_server_message(message):
 	var type = message.type
 	var payload = message.payload
+	var received_message_id = payload.get("message_id")
+	if unreconciled_messages.has(received_message_id):
+		unreconciled_messages.erase(received_message_id)
+		return
 	if type == "SET_STATE":
 		return get_node("../Level").setup_state(payload.state)
 	if type == "PLAYER_JOINED":
@@ -47,3 +46,14 @@ remote func _on_server_message(message):
 
 func is_local_player(player_id):
 	return player_id == get_tree().get_network_unique_id()
+
+func send(type, payload={}):
+	var message = {
+		"id": message_id,
+		"type": type,
+		"player_id": get_tree().get_network_unique_id(),
+		"payload": payload,
+	}
+	unreconciled_messages[message_id] = message
+	rpc_unreliable_id(1, "_on_client_message", message)
+	message_id += 1
