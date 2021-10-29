@@ -1,10 +1,14 @@
 extends Node
 
+var config = ConfigFile.new()
 var network = NetworkedMultiplayerENet.new()
-var ip = "127.0.0.1"
-var port = 29292
+var ip
+var port
 
 func _ready():
+	config.load("settings.cfg")
+	ip = config.get_value("server", "ip", "127.0.0.1")
+	port = config.get_value("server", "port", 29292)
 	start_client()
 
 func start_client():
@@ -15,7 +19,7 @@ func start_client():
 	print("Client started")
 
 func _on_connection_succeeded():
-	print("Connected to server")
+	print("Connected to server at " + ip + ":" + str(port))
 
 func _on_connection_failed():
 	print("Connecting to server failed")

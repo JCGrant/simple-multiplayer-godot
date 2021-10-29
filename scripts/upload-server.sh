@@ -1,0 +1,1 @@
+scp server/exports/server.pck apps:apps/simple-godot-server
