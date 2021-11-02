@@ -23,7 +23,7 @@ func despawn_player(player_id):
 	_get_player(player_id).queue_free()
 
 func move_player(player_id, position):
-	_get_player(player_id).position = position
+	_get_player(player_id).target_position = position
 
 func _get_player(player_id):
 	return get_node("Players/" + str(player_id))

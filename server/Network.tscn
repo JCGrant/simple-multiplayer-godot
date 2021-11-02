@@ -4,3 +4,9 @@
 
 [node name="Network" type="Node"]
 script = ExtResource( 1 )
+
+[node name="NetworkTick" type="Timer" parent="."]
+wait_time = 0.05
+autostart = true
+
+[connection signal="timeout" from="NetworkTick" to="." method="_on_NetworkTick_timeout"]
